@@ -2,7 +2,7 @@
 ### *Explainable AI Recommendation Agent Transforming Casual Scrolling into Structured Career Discovery*
 
 [![CI](https://github.com/yoursdevendhar/TechTrace-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/yoursdevendhar/TechTrace-AI/actions)
-[![Tests](https://img.shields.io/badge/Tests-26%2F26%20Passing-brightgreen?logo=vitest&logoColor=white)](https://vitest.dev/)
+[![Tests](https://img.shields.io/badge/Tests-36%2F36%20Passing-brightgreen?logo=vitest&logoColor=white)](https://vitest.dev/)
 [![ESLint](https://img.shields.io/badge/Code%20Quality-100%25%20Clean-brightgreen?logo=eslint&logoColor=white)](https://eslint.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5%20Strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
