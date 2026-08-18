@@ -2,17 +2,21 @@ import { useState, useMemo } from 'react';
 import {
   Sparkles,
   TrendingUp,
-  Compass,
-  Target,
-  AlertTriangle,
   BookOpen,
+  AlertTriangle,
+  Compass,
+  Zap,
+  Target,
   Shield,
-  Play,
   RotateCw,
+  Play,
   PlusCircle,
   Heart,
   Bookmark,
   Eye,
+  MessageCircle,
+  Send,
+  X,
 } from 'lucide-react';
 import type { Recommendation, RecommendationStrategy, Confidence, Reel, Interaction } from '@/types';
 import { getReelVideo } from '@/data/reelImages';
@@ -37,29 +41,29 @@ const strategyConfig: Record<
   { label: string; icon: React.ReactNode; color: string; bg: string }
 > = {
   exploitation: {
-    label: 'Related Interest',
+    label: 'Direct Match',
     icon: <Target className="h-3.5 w-3.5" />,
-    color: 'text-cyan-400 border-cyan-500/30',
-    bg: 'bg-cyan-500/10',
+    color: 'text-cyan-400',
+    bg: 'bg-cyan-500/10 border-cyan-500/30',
   },
   adjacent: {
-    label: 'Adjacent Tech',
-    icon: <TrendingUp className="h-3.5 w-3.5" />,
-    color: 'text-violet-400 border-violet-500/30',
-    bg: 'bg-violet-500/10',
+    label: 'Skill Progression',
+    icon: <Zap className="h-3.5 w-3.5" />,
+    color: 'text-purple-400',
+    bg: 'bg-purple-500/10 border-purple-500/30',
   },
   exploration: {
-    label: 'New Discovery',
+    label: 'New Horizon',
     icon: <Compass className="h-3.5 w-3.5" />,
-    color: 'text-amber-400 border-amber-500/30',
-    bg: 'bg-amber-500/10',
+    color: 'text-amber-400',
+    bg: 'bg-amber-500/10 border-amber-500/30',
   },
 };
 
-const confidenceConfig: Record<Confidence, { color: string }> = {
-  High: { color: 'text-emerald-400' },
-  Medium: { color: 'text-amber-400' },
-  Low: { color: 'text-slate-400' },
+const confidenceConfig: Record<Confidence, { color: string; bg: string }> = {
+  High: { color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30' },
+  Medium: { color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/30' },
+  Low: { color: 'text-slate-400', bg: 'bg-slate-500/10 border-slate-500/30' },
 };
 
 export default function RecommendationPanel({
@@ -78,11 +82,40 @@ export default function RecommendationPanel({
     'all' | RecommendationStrategy
   >('all');
   const [activePlayingRec, setActivePlayingRec] = useState<Recommendation | null>(null);
+  const [expandedCommentsReelId, setExpandedCommentsReelId] = useState<string | null>(null);
+  const [cardComments, setCardComments] = useState<Record<string, string[]>>({});
+  const [newCardComment, setNewCardComment] = useState('');
 
   const filteredRecommendations =
     selectedStrategyFilter === 'all'
       ? recommendations
       : recommendations.filter((r) => r.strategy === selectedStrategyFilter);
+
+  const handleAddCardComment = (reelId: string) => {
+    if (!newCardComment.trim()) return;
+    const initialList = cardComments[reelId] || [
+      '🔥 Super insightful architectural breakdown!',
+      'Saved for production interview review.',
+    ];
+    setCardComments((prev) => ({
+      ...prev,
+      [reelId]: [...initialList, newCardComment.trim()],
+    }));
+    setNewCardComment('');
+    onInteraction({
+      reelId,
+      studentId,
+      watchPercentage: 100,
+      watchDuration: 60,
+      replays: 0,
+      liked: false,
+      saved: false,
+      shared: false,
+      commented: true,
+      skipped: false,
+      followed: false,
+    });
+  };
 
   if (recommendations.length === 0) {
     return (
@@ -378,17 +411,98 @@ export default function RecommendationPanel({
                   </div>
                 </div>
 
-                {/* Hashtags */}
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {rec.reel.hashtags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-lg bg-slate-800/80 px-2.5 py-1 text-[11px] font-medium text-slate-400"
+                {/* Actions & Hashtags Row */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800/80">
+                  <div className="flex flex-wrap gap-1.5">
+                    {rec.reel.hashtags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-lg bg-slate-800/80 px-2.5 py-1 text-[11px] font-medium text-slate-400"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        setExpandedCommentsReelId(
+                          expandedCommentsReelId === rec.reel.id ? null : rec.reel.id
+                        )
+                      }
+                      className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
+                        expandedCommentsReelId === rec.reel.id
+                          ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                          : 'border border-slate-700 bg-slate-800/60 text-slate-300 hover:text-white'
+                      }`}
                     >
-                      {tag}
-                    </span>
-                  ))}
+                      <MessageCircle className="h-3.5 w-3.5" />
+                      <span>
+                        Discussions (
+                        {(cardComments[rec.reel.id]?.length || 2)}
+                        )
+                      </span>
+                    </button>
+                  </div>
                 </div>
+
+                {/* Expandable Discussions Box */}
+                {expandedCommentsReelId === rec.reel.id && (
+                  <div className="rounded-2xl border border-cyan-500/30 bg-slate-950/80 p-4 space-y-3 shadow-inner">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                      <span className="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
+                        <MessageCircle className="h-3.5 w-3.5" />
+                        Community Discussions & Questions
+                      </span>
+                      <button
+                        onClick={() => setExpandedCommentsReelId(null)}
+                        className="text-slate-400 hover:text-white"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+
+                    <div className="max-h-36 overflow-y-auto space-y-2 pr-1">
+                      {(
+                        cardComments[rec.reel.id] || [
+                          '🔥 Super insightful architectural breakdown!',
+                          'Saved for production interview review.',
+                        ]
+                      ).map((c, i) => (
+                        <div
+                          key={i}
+                          className="rounded-xl bg-slate-900/90 p-2.5 text-xs text-slate-300 border border-slate-800/80"
+                        >
+                          <span className="text-[10px] font-bold text-cyan-400 block mb-0.5">
+                            @engineer_{i + 1}
+                          </span>
+                          <p className="leading-relaxed font-sans">{c}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex gap-2 pt-1">
+                      <input
+                        type="text"
+                        value={newCardComment}
+                        onChange={(e) => setNewCardComment(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleAddCardComment(rec.reel.id);
+                        }}
+                        placeholder="Add a comment or question about this recommendation..."
+                        className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+                      />
+                      <button
+                        onClick={() => handleAddCardComment(rec.reel.id)}
+                        disabled={!newCardComment.trim()}
+                        className="rounded-xl bg-cyan-500 px-3 py-2 text-white hover:bg-cyan-400 transition-colors disabled:opacity-40"
+                      >
+                        <Send className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           );

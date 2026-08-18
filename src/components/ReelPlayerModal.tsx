@@ -379,6 +379,65 @@ export default function ReelPlayerModal({
               </div>
             )}
           </button>
+
+          {/* Comments Drawer Overlay on Left Viewport (Mobile & Direct Tap) */}
+          {showComments && (
+            <div className="absolute inset-x-0 bottom-0 top-1/4 z-40 flex flex-col rounded-t-3xl border-t border-slate-700 bg-slate-950/95 p-4 shadow-2xl backdrop-blur-xl">
+              <div className="mb-3 flex items-center justify-between border-b border-slate-800 pb-2">
+                <div className="flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4 text-cyan-400" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-200">
+                    Discussions ({commentsList.length})
+                  </span>
+                </div>
+                <button
+                  onClick={() => setShowComments(false)}
+                  className="rounded-full p-1 text-slate-400 hover:bg-slate-800 hover:text-white"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Comments List */}
+              <div className="flex-1 space-y-2 overflow-y-auto pr-1">
+                {commentsList.map((c, i) => (
+                  <div
+                    key={i}
+                    className="rounded-2xl border border-slate-800 bg-slate-900/80 p-2.5 text-xs text-slate-300 shadow-sm"
+                  >
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <div className="flex h-4 w-4 items-center justify-center rounded-full bg-cyan-500/20 text-[9px] font-bold text-cyan-300">
+                        {i + 1}
+                      </div>
+                      <span className="text-[10px] font-bold text-cyan-400">@dev_{i + 1}</span>
+                    </div>
+                    <p className="leading-relaxed font-sans">{c}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Comment Input */}
+              <div className="mt-3 flex items-center gap-2 border-t border-slate-800 pt-2">
+                <input
+                  type="text"
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleAddComment();
+                  }}
+                  placeholder="Add a comment or question..."
+                  className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+                />
+                <button
+                  onClick={handleAddComment}
+                  disabled={!newComment.trim()}
+                  className="flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-500 text-white shadow-md shadow-cyan-500/20 transition-all hover:bg-cyan-400 disabled:opacity-40"
+                >
+                  <Send className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Side: Explainability, Community Comments & AI Diagnostics */}
