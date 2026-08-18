@@ -1,8 +1,25 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "techtrace-ai",
+  "version": "1.0.0",
+  "description": "Explainable AI Recommendation Agent Transforming Casual Scrolling into Structured Career Discovery",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
+  "author": "Devendhar",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yoursdevendhar/TechTrace-AI.git"
+  },
+  "keywords": [
+    "ai",
+    "recommendation-engine",
+    "explainable-ai",
+    "education",
+    "career-discovery",
+    "react",
+    "typescript",
+    "vite"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -19,5 +19,7 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
 .env
+.env*.local
+coverage
+.gemini
