@@ -173,6 +173,10 @@ class VoiceoverEngine {
     this.activeUtterance = null;
   }
 
+  public getActiveUtterance(): SpeechSynthesisUtterance | null {
+    return this.activeUtterance;
+  }
+
   public isSpeaking(): boolean {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
     return window.speechSynthesis.speaking && !window.speechSynthesis.paused;
