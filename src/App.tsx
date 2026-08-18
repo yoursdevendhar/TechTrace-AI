@@ -306,7 +306,11 @@ export default function App() {
               </div>
             </div>
 
-            <nav className="hidden items-center gap-1 md:flex">
+            <nav
+              role="tablist"
+              aria-label="Main application tabs"
+              className="hidden items-center gap-1 md:flex"
+            >
               {([
                 { id: 'feed', label: 'Reel Feed' },
                 { id: 'profile', label: 'Interest Profile' },
@@ -315,8 +319,12 @@ export default function App() {
               ] as { id: Tab; label: string }[]).map((tab) => (
                 <button
                   key={tab.id}
+                  role="tab"
+                  id={`tab-${tab.id}`}
+                  aria-selected={activeTab === tab.id}
+                  aria-controls={`panel-${tab.id}`}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                  className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                     activeTab === tab.id
                       ? 'bg-cyan-500/15 text-cyan-400 shadow-sm shadow-cyan-500/10'
                       : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-200'
@@ -336,7 +344,8 @@ export default function App() {
               {/* Active User Account Switcher Button */}
               <button
                 onClick={() => setIsProfileModalOpen(true)}
-                className="flex items-center gap-2 rounded-xl border border-slate-700/80 bg-slate-800/70 px-2.5 py-1.5 transition-all hover:border-cyan-500/50 hover:bg-slate-800"
+                aria-label={`Switch active profile. Currently logged in as ${selectedStudent.name}`}
+                className="flex items-center gap-2 rounded-xl border border-slate-700/80 bg-slate-800/70 px-2.5 py-1.5 transition-all hover:border-cyan-500/50 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
                 title="Switch or Create Account"
               >
                 <div
@@ -352,7 +361,8 @@ export default function App() {
               {/* Trap Analysis Evaluator Button */}
               <button
                 onClick={() => setIsComparisonModalOpen(true)}
-                className="hidden sm:flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-300 shadow-md shadow-amber-500/10 transition-all hover:bg-amber-500/20 active:scale-95"
+                aria-label="Open Built-In Trap Analysis modal"
+                className="hidden sm:flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-300 shadow-md shadow-amber-500/10 transition-all hover:bg-amber-500/20 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                 title="Built-In Trap: Shallow vs. TechTrace AI Comparison"
               >
                 <span>⚡ Trap Analysis</span>
@@ -361,15 +371,17 @@ export default function App() {
               {/* AI Reel Studio Generator Button */}
               <button
                 onClick={() => setIsGenerateModalOpen(true)}
-                className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 px-3.5 py-2 text-xs font-bold text-white shadow-lg shadow-cyan-500/20 transition-all hover:brightness-110 hover:shadow-cyan-500/30 active:scale-95"
+                aria-label="Open AI Reel Studio generator"
+                className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 px-3.5 py-2 text-xs font-bold text-white shadow-lg shadow-cyan-500/20 transition-all hover:brightness-110 hover:shadow-cyan-500/30 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
               >
-                <Sparkles className="h-4 w-4" />
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
                 <span>AI Reel Studio</span>
               </button>
 
               <button
                 onClick={handleResetStudent}
-                className="hidden rounded-xl border border-slate-700/80 bg-slate-800/50 px-3 py-2 text-xs font-medium text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-200 sm:block"
+                aria-label="Reset active student trajectory data"
+                className="hidden rounded-xl border border-slate-700/80 bg-slate-800/50 px-3 py-2 text-xs font-medium text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-200 sm:block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
                 title="Reset student profile interactions to default"
               >
                 Reset
@@ -378,7 +390,11 @@ export default function App() {
           </div>
 
           {/* Mobile tabs */}
-          <nav className="flex items-center gap-1 overflow-x-auto pb-2 md:hidden">
+          <nav
+            role="tablist"
+            aria-label="Mobile navigation tabs"
+            className="flex items-center gap-1 overflow-x-auto pb-2 md:hidden"
+          >
             {([
               { id: 'feed', label: 'Feed' },
               { id: 'profile', label: 'Profile' },
@@ -387,8 +403,10 @@ export default function App() {
             ] as { id: Tab; label: string }[]).map((tab) => (
               <button
                 key={tab.id}
+                role="tab"
+                aria-selected={activeTab === tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`whitespace-nowrap rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
+                className={`whitespace-nowrap rounded-xl px-3 py-1.5 text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                   activeTab === tab.id
                     ? 'bg-cyan-500/15 text-cyan-400'
                     : 'text-slate-400 hover:bg-slate-800'

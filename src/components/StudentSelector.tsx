@@ -69,7 +69,9 @@ export default function StudentSelector({
             <button
               key={student.id}
               onClick={() => onSelect(student.id)}
-              className={`flex shrink-0 items-center gap-1.5 rounded-xl border px-2.5 py-1 text-xs transition-all ${
+              aria-pressed={isSelected}
+              aria-label={`Switch to student profile ${student.name}`}
+              className={`flex shrink-0 items-center gap-1.5 rounded-xl border px-2.5 py-1 text-xs transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                 isSelected
                   ? 'border-cyan-500 bg-cyan-500/20 text-white font-bold ring-1 ring-cyan-500/40'
                   : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700 hover:text-slate-200'

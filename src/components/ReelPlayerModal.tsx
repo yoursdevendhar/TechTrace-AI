@@ -239,7 +239,12 @@ export default function ReelPlayerModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-2 sm:p-4 backdrop-blur-md">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="reel-player-title"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-2 sm:p-4 backdrop-blur-md"
+    >
       <div className="relative flex h-[92vh] w-full max-w-4xl overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl">
         {/* Left Side: Realistic Reel Player Viewport */}
         <div className="relative aspect-[9/16] h-full max-w-[420px] shrink-0 bg-slate-900 border-r border-slate-800/80">
@@ -258,7 +263,8 @@ export default function ReelPlayerModal({
           <div className="absolute left-0 right-0 top-3 z-30 flex items-center justify-between px-3">
             <button
               onClick={onClose}
-              className="rounded-full bg-black/70 p-2 text-white/90 backdrop-blur-md hover:bg-black/90 transition-colors shadow"
+              aria-label="Close reel player modal"
+              className="rounded-full bg-black/70 p-2 text-white/90 backdrop-blur-md hover:bg-black/90 transition-colors shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
             >
               <X className="h-4 w-4" />
             </button>

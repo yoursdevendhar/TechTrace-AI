@@ -69,17 +69,22 @@ export default function CareerRoadmapModal({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-3 sm:p-6 backdrop-blur-md">
-      <div className="relative flex h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-cyan-500/30 bg-slate-950 shadow-2xl">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="career-modal-title"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-3 sm:p-6 backdrop-blur-md"
+    >
+      <div className="relative flex h-[88vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-purple-500/30 bg-slate-950 shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900/90 p-5">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg shadow-purple-500/25">
-              <GraduationCap className="h-5 w-5" />
+              <GraduationCap className="h-5 w-5" aria-hidden="true" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-white">
+                <h2 id="career-modal-title" className="text-base font-bold text-white">
                   Personalized Technology Learning Roadmap
                 </h2>
                 <span className="rounded-full bg-cyan-500/15 px-2.5 py-0.5 text-[10px] font-bold text-cyan-300 border border-cyan-500/30">
@@ -94,7 +99,8 @@ export default function CareerRoadmapModal({
 
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+            aria-label="Close career roadmap modal"
+            className="rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             <X className="h-5 w-5" />
           </button>

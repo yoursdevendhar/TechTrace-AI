@@ -135,16 +135,21 @@ Status: PASSED (Converts casual meme/gadget scrolling into Software Engineering 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-md">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="scorecard-modal-title"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-md"
+    >
       <div className="relative flex max-h-[92vh] w-full max-w-4xl flex-col rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900/80 px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-orange-500/20">
-              <Award className="h-5 w-5" />
+              <Award className="h-5 w-5" aria-hidden="true" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <h2 id="scorecard-modal-title" className="text-base font-bold text-white flex items-center gap-2">
                 AI Evaluation Scorecard & Rubric Audit
                 <span className="rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-extrabold text-emerald-400 border border-emerald-500/30">
                   Grade A+ (Score: {overallScore}%)
@@ -159,7 +164,8 @@ Status: PASSED (Converts casual meme/gadget scrolling into Software Engineering 
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopyReport}
-              className="flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors"
+              aria-label="Copy evaluation audit report to clipboard"
+              className="flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
             >
               {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
               <span>{copied ? 'Audit Copied!' : 'Copy Audit'}</span>
@@ -167,7 +173,8 @@ Status: PASSED (Converts casual meme/gadget scrolling into Software Engineering 
 
             <button
               onClick={onClose}
-              className="rounded-full p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+              aria-label="Close scorecard modal"
+              className="rounded-full p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
             >
               <X className="h-4 w-4" />
             </button>
