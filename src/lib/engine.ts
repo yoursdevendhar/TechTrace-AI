@@ -425,6 +425,18 @@ export function generateRecommendations(
     ...exploration.slice(0, explorationCount),
   ];
 
+  if (selected.length < count) {
+    const selectedIds = new Set(selected.map((s) => s.reel.id));
+    const sortedRemaining = [...scored].sort((a, b) => b.score - a.score);
+    for (const r of sortedRemaining) {
+      if (!selectedIds.has(r.reel.id)) {
+        selected.push(r);
+        selectedIds.add(r.reel.id);
+        if (selected.length >= count) break;
+      }
+    }
+  }
+
   selected.sort((a, b) => b.score - a.score);
 
   return selected.slice(0, count);

@@ -140,6 +140,22 @@ export default function App() {
     }
   }, [interactions, customReels, selectedStudentId]);
 
+  // Global Escape key accessibility listener to dismiss active modals
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsGenerateModalOpen(false);
+        setIsComparisonModalOpen(false);
+        setIsExportModalOpen(false);
+        setIsRoadmapModalOpen(false);
+        setIsProfileModalOpen(false);
+        setIsScorecardModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const handleInteraction = useCallback(
     async (interaction: Interaction) => {
       // Register custom reel in reelMap if it's new

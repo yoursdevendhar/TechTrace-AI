@@ -107,4 +107,18 @@ describe('Recommendation Engine Core Algorithm Tests', () => {
     expect(exploitation.length).toBeGreaterThan(0);
     expect(recs.every((r) => r.score >= 0)).toBe(true);
   });
+
+  it('safely handles empty interaction history with structured default recommendations', () => {
+    const defaultRecs = generateRecommendations([], { count: 6 });
+    expect(defaultRecs.length).toBe(6);
+    expect(defaultRecs.every((r) => r.reel && r.confidence)).toBe(true);
+  });
+
+  it('properly penalizes sensational high-hype content to prioritize credibility', () => {
+    const recs = generateRecommendations(priyaAiInteractions, { count: 8 });
+    // All top recommendations should have high educational value and credibility
+    const topRec = recs[0];
+    expect(topRec.educationalValue).toBeGreaterThan(60);
+    expect(topRec.reel.credibility).toBeGreaterThan(60);
+  });
 });
