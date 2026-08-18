@@ -21,6 +21,7 @@ import AlgorithmComparisonModal from '@/components/AlgorithmComparisonModal';
 import ExportReportModal from '@/components/ExportReportModal';
 import CareerRoadmapModal from '@/components/CareerRoadmapModal';
 import ProfileModal from '@/components/ProfileModal';
+import EvaluationScorecardModal from '@/components/EvaluationScorecardModal';
 import type { GeneratedReelResult } from '@/lib/generator';
 
 type Tab = 'feed' | 'profile' | 'recommendations' | 'graph';
@@ -53,6 +54,7 @@ export default function App() {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isRoadmapModalOpen, setIsRoadmapModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isScorecardModalOpen, setIsScorecardModalOpen] = useState(false);
 
   const selectedStudent: StudentProfile = useMemo(
     () => allStudents.find((s) => s.id === selectedStudentId) || allStudents[0],
@@ -459,12 +461,23 @@ export default function App() {
                 onOpenComparisonModal={() => setIsComparisonModalOpen(true)}
                 onOpenExportModal={() => setIsExportModalOpen(true)}
                 onOpenRoadmapModal={() => setIsRoadmapModalOpen(true)}
+                onOpenScorecardModal={() => setIsScorecardModalOpen(true)}
               />
             )}
             {activeTab === 'graph' && <InterestGraph graphData={graphData} />}
           </>
         )}
       </main>
+
+      {/* Evaluation Scorecard & Rubric Audit Modal */}
+      <EvaluationScorecardModal
+        isOpen={isScorecardModalOpen}
+        onClose={() => setIsScorecardModalOpen(false)}
+        student={selectedStudent}
+        latentInterest={latentInterest}
+        recommendations={recommendations}
+        interactions={interactions}
+      />
 
       {/* AI Reel Studio Generation Modal */}
       <GenerateReelModal
