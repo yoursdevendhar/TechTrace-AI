@@ -5,7 +5,6 @@ import {
   Check,
   Download,
   FileText,
-  Sparkles,
   ShieldCheck,
 } from 'lucide-react';
 import type { Recommendation, Interaction, StudentProfile } from '@/types';

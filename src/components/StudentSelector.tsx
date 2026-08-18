@@ -1,4 +1,4 @@
-import { UserPlus, Users, ChevronRight } from 'lucide-react';
+import { UserPlus, ChevronRight } from 'lucide-react';
 import type { StudentProfile } from '@/types';
 
 interface Props {

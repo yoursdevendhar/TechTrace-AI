@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import {
   Volume2,
   VolumeX,
-  Sliders,
-  Sparkles,
   Radio,
   ChevronDown,
   Check,

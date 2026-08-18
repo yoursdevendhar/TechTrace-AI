@@ -85,3 +85,6 @@ export const seededInteractions: Record<string, Interaction[]> = {
     { reelId: 's006', studentId: 'karan', watchPercentage: 70, watchDuration: 52, replays: 0, liked: false, saved: false, shared: false, commented: false, skipped: false, followed: false },
   ],
 };
+
+export const initialInteractions = seededInteractions;
+

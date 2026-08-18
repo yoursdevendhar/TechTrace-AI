@@ -1,7 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import {
   Sparkles,
-  TrendingUp,
   BookOpen,
   AlertTriangle,
   Compass,
@@ -12,13 +11,12 @@ import {
   Play,
   PlusCircle,
   Heart,
-  Bookmark,
   Eye,
   MessageCircle,
   Send,
   X,
 } from 'lucide-react';
-import type { Recommendation, RecommendationStrategy, Confidence, Reel, Interaction } from '@/types';
+import type { Recommendation, RecommendationStrategy, Confidence, Interaction } from '@/types';
 import { getReelVideo } from '@/data/reelImages';
 import { getReelMetrics } from '@/lib/metrics';
 import ReelPlayerModal from '@/components/ReelPlayerModal';

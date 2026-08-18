@@ -1,19 +1,13 @@
 import { useState } from 'react';
 import {
   X,
-  AlertTriangle,
   CheckCircle2,
-  Sparkles,
   ShieldAlert,
   ShieldCheck,
-  TrendingDown,
-  TrendingUp,
-  Brain,
   Layers,
 } from 'lucide-react';
 import type { Recommendation, Interaction, StudentProfile, Reel } from '@/types';
 import { generateNaiveRecommendations } from '@/lib/naiveRecommender';
-import { getReelVideo } from '@/data/reelImages';
 
 interface Props {
   isOpen: boolean;
@@ -167,7 +161,6 @@ export default function AlgorithmComparisonModal({
                   Output Feed (Shallow Matching):
                 </span>
                 {naiveResult.recommendations.map((rec, idx) => {
-                  const media = getReelVideo(rec.reel.id, rec.reel.category, idx);
                   const isClickbait = rec.reel.hypeScore > 60;
 
                   return (

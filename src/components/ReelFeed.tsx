@@ -8,8 +8,6 @@ import {
   Play,
   Pause,
   RotateCcw,
-  Volume2,
-  VolumeX,
   Sparkles,
   Check,
   Send,
@@ -38,7 +36,7 @@ interface Props {
   studentName?: string;
   studentAvatar?: string;
   studentGradient: string;
-  watchedReelIds: Set<string>;
+  watchedReelIds?: Set<string>;
   interactions?: Interaction[];
   onInteraction: (interaction: Interaction) => void;
   onOpenGenerateModal?: () => void;
@@ -50,7 +48,6 @@ export default function ReelFeed({
   studentName = 'Student',
   studentAvatar,
   studentGradient,
-  watchedReelIds,
   interactions = [],
   onInteraction,
   onOpenGenerateModal,
@@ -64,7 +61,6 @@ export default function ReelFeed({
   const [progress, setProgress] = useState(0);
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [selectedVoiceName, setSelectedVoiceName] = useState<string | undefined>(undefined);
-  const [showActions, setShowActions] = useState(false);
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [shared, setShared] = useState(false);
@@ -107,10 +103,7 @@ export default function ReelFeed({
 
   // Initialize interaction flags from user's history when reel changes
   useEffect(() => {
-    if (!currentReel) return;
-    const existing = interactions.find(
-      (i) => i.reelId === currentReel.id && i.studentId === studentId
-    );
+    const existing = interactions.find((i) => i.reelId === currentReel?.id);
     setProgress(0);
     setLiked(existing ? !!existing.liked : false);
     setSaved(existing ? !!existing.saved : false);
@@ -118,10 +111,9 @@ export default function ReelFeed({
     setFollowed(existing ? !!existing.followed : false);
     setReplays(existing ? existing.replays : 0);
     setRecorded(false);
-    setShowActions(false);
     setShowComments(false);
     setIsPlaying(true);
-  }, [currentIndex, currentReel?.id, studentId]);
+  }, [currentIndex, currentReel, interactions, studentId]);
 
   // Robust AI voiceover narration engine
   useEffect(() => {
@@ -231,14 +223,12 @@ export default function ReelFeed({
   function handleToggleLike() {
     const next = !liked;
     setLiked(next);
-    setShowActions(true);
     emitInteraction({ liked: next });
   }
 
   function handleToggleSave() {
     const next = !saved;
     setSaved(next);
-    setShowActions(true);
     emitInteraction({ saved: next });
   }
 
@@ -372,7 +362,20 @@ export default function ReelFeed({
               {currentReel.creator.slice(0, 2).toUpperCase()}
             </div>
             <div>
-              <p className="text-xs font-bold text-white">@{currentReel.creator}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-bold text-white">@{currentReel.creator}</p>
+                <button
+                  onClick={handleFollow}
+                  disabled={followed}
+                  className={`rounded-full px-2 py-0.5 text-[9px] font-bold transition-all ${
+                    followed
+                      ? 'bg-slate-700 text-slate-300'
+                      : 'bg-cyan-500 text-white hover:bg-cyan-400'
+                  }`}
+                >
+                  {followed ? 'Following' : '+ Follow'}
+                </button>
+              </div>
               <p className="text-[10px] text-cyan-400 font-medium">{currentReel.category}</p>
             </div>
           </div>

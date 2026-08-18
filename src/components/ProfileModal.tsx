@@ -5,8 +5,6 @@ import {
   Users,
   Check,
   Trash2,
-  Sparkles,
-  ShieldCheck,
   UserCheck,
   LogIn,
 } from 'lucide-react';

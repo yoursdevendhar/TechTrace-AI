@@ -93,7 +93,7 @@ class VoiceoverEngine {
       voiceName?: string;
       onBoundary?: (charIndex: number) => void;
       onEnd?: () => void;
-      onError?: (err: any) => void;
+      onError?: (err: unknown) => void;
     } = {}
   ) {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;

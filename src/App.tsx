@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Sparkles, RotateCw, Wand2 } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { students, seededInteractions } from '@/data/students';
-import { reelMap, reels } from '@/data/reels';
+import { reelMap } from '@/data/reels';
 import type { Interaction, Recommendation, Reel, StudentProfile } from '@/types';
 import { supabase } from '@/lib/supabase';
 import {
@@ -182,7 +182,7 @@ export default function App() {
           },
           { onConflict: 'student_id,reel_id' }
         );
-      } catch (e) {
+      } catch {
         // Safe fallback - local state is already updated seamlessly
       }
     },
@@ -215,7 +215,9 @@ export default function App() {
       const updated = [...prev, newStudent];
       try {
         localStorage.setItem(CUSTOM_STUDENTS_KEY, JSON.stringify(updated));
-      } catch {}
+      } catch {
+        // Local storage full or private mode fallback
+      }
       return updated;
     });
     if (initialInteractions && initialInteractions.length > 0) {
@@ -233,7 +235,9 @@ export default function App() {
       const updated = prev.filter((s) => s.id !== studentId);
       try {
         localStorage.setItem(CUSTOM_STUDENTS_KEY, JSON.stringify(updated));
-      } catch {}
+      } catch {
+        // Local storage fallback
+      }
       return updated;
     });
     if (selectedStudentId === studentId) {

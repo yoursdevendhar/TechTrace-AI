@@ -8,8 +8,6 @@ import {
   Bookmark,
   Share2,
   MessageCircle,
-  Volume2,
-  VolumeX,
   Sparkles,
   Shield,
   BookOpen,
@@ -64,7 +62,6 @@ export default function ReelPlayerModal({
 }: Props) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
-  const [muted, setMuted] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [selectedVoiceName, setSelectedVoiceName] = useState<string | undefined>(undefined);
   const [liked, setLiked] = useState(false);
@@ -72,7 +69,6 @@ export default function ReelPlayerModal({
   const [shared, setShared] = useState(false);
   const [showShareToast, setShowShareToast] = useState(false);
   const [showComments, setShowComments] = useState(false);
-  const [showWhyDrawer, setShowWhyDrawer] = useState(false);
   const [commentsList, setCommentsList] = useState<CommentItem[]>([
     {
       id: 'c1',
@@ -116,7 +112,6 @@ export default function ReelPlayerModal({
       setReplays(0);
       setRecorded(false);
       setShowComments(false);
-      setShowWhyDrawer(false);
     }
   }, [isOpen, reel]);
 
@@ -202,14 +197,14 @@ export default function ReelPlayerModal({
     };
   }, [isOpen, isPlaying, reel, playbackSpeed, recordInteraction]);
 
-  if (!isOpen || !reel) return null;
-
-  const videoData = getReelVideo(reel.id, reel.category, 0);
-
   const metrics = useMemo(
     () => (reel ? getReelMetrics(reel, liked, saved, commentsList.length - 3) : null),
     [reel, liked, saved, commentsList.length]
   );
+
+  if (!isOpen || !reel) return null;
+
+  const videoData = getReelVideo(reel.id, reel.category, 0);
 
   const handleShare = () => {
     setShared(true);

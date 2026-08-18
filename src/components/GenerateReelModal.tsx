@@ -9,7 +9,7 @@ import {
   Shield,
   BookOpen,
 } from 'lucide-react';
-import type { StudentProfile, Reel } from '@/types';
+import type { StudentProfile } from '@/types';
 import {
   generateRealisticReel,
   topicSuggestionsByInterest,

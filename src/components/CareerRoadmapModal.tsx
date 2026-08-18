@@ -2,12 +2,8 @@ import {
   X,
   GraduationCap,
   Sparkles,
-  ArrowRight,
   CheckCircle2,
   Lock,
-  Code2,
-  Terminal,
-  Cpu,
   Layers,
 } from 'lucide-react';
 import type { StudentProfile, InterestNode, SkillLevel } from '@/types';
@@ -18,7 +14,7 @@ interface Props {
   student: StudentProfile;
   latentInterest: string;
   interestProfile: InterestNode[];
-  skillProfile: { topic: string; skillLevel: SkillLevel }[];
+  skillProfile?: { topic: string; skillLevel: SkillLevel }[];
 }
 
 export default function CareerRoadmapModal({
@@ -27,7 +23,6 @@ export default function CareerRoadmapModal({
   student,
   latentInterest,
   interestProfile,
-  skillProfile,
 }: Props) {
   if (!isOpen) return null;
 
@@ -125,7 +120,7 @@ export default function CareerRoadmapModal({
 
         {/* Roadmap Milestones */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
-          {roadmapSteps.map((step, idx) => (
+          {roadmapSteps.map((step) => (
             <div
               key={step.level}
               className={`relative rounded-2xl border p-4 space-y-2 transition-all ${step.color}`}

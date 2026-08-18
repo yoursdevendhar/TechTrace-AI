@@ -20,10 +20,6 @@ export default function InterestProfilePanel({
 }: Props) {
   const maxWeight = Math.max(...interestProfile.map((n) => n.weight), 1);
 
-  const watchedReels = interactions
-    .map((i) => reelMap[i.reelId])
-    .filter(Boolean);
-
   const totalLiked = interactions.filter((i) => i.liked).length;
   const totalSaved = interactions.filter((i) => i.saved).length;
   const totalShared = interactions.filter((i) => i.shared).length;

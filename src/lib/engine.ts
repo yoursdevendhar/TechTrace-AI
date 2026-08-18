@@ -196,8 +196,7 @@ function estimateSkillLevel(interactions: Interaction[], topicId: string): Skill
 
 function calculateRelevanceScore(
   reel: Reel,
-  interestProfile: InterestNode[],
-  interactions: Interaction[]
+  interestProfile: InterestNode[]
 ): { score: number; matchedTopics: string[]; strategy: RecommendationStrategy } {
   const reelTopicIds = new Set<string>();
   for (const topic of reel.topics) {
@@ -223,7 +222,7 @@ function calculateRelevanceScore(
 
   let directScore = 0;
   let adjacentScore = 0;
-  let matchedTopics: string[] = [];
+  const matchedTopics: string[] = [];
   let strategy: RecommendationStrategy = 'exploration';
 
   for (const topicId of reelTopicIds) {
@@ -362,8 +361,7 @@ export function generateRecommendations(
   const scored: Recommendation[] = candidates.map((reel) => {
     const { score: relevanceScore, matchedTopics, strategy } = calculateRelevanceScore(
       reel,
-      interestProfile,
-      interactions
+      interestProfile
     );
 
     const hypePenalty = calculateHypePenalty(reel);

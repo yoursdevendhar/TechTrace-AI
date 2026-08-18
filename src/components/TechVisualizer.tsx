@@ -177,6 +177,9 @@ export default function TechVisualizer({
               <div className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
               <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
               <div className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
+              <span className="text-[10px] text-slate-400 truncate max-w-[130px] font-sans font-semibold ml-1.5 hidden sm:inline">
+                {title}
+              </span>
             </div>
 
             <div className="flex items-center gap-1">
