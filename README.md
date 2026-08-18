@@ -1,10 +1,11 @@
 # 🚀 TechTrace AI — The Algorithm Knows You Too Well
 ### *Explainable AI Recommendation Agent Transforming Casual Scrolling into Structured Career Discovery*
 
+[![Tests](https://img.shields.io/badge/Tests-20%2F20%20Passing-brightgreen?logo=vitest&logoColor=white)](https://vitest.dev/)
+[![ESLint](https://img.shields.io/badge/Code%20Quality-100%25%20Clean-brightgreen?logo=eslint&logoColor=white)](https://eslint.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=black)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Vercel Ready](https://img.shields.io/badge/Deployment-Vercel%20Ready-000000?logo=vercel&logoColor=white)](https://vercel.com/)
 
 ---
@@ -130,10 +131,12 @@ A student interacts with:
    ```
    Open **`http://localhost:5173/`** in your browser.
 
-4. **Run production build & typecheck:**
+4. **Run automated test suites & code validation:**
    ```bash
-   npm run typecheck
-   npm run build
+   npm test          # Runs 20/20 Vitest unit test suites
+   npm run lint      # Verifies 100% clean code quality (0 errors, 0 warnings)
+   npm run typecheck # Verifies TypeScript type safety
+   npm run build     # Compiles production-ready bundle
    ```
 
 ---
