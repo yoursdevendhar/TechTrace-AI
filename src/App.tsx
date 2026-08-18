@@ -32,7 +32,15 @@ export default function App() {
   const [customStudents, setCustomStudents] = useState<StudentProfile[]>(() => {
     try {
       const saved = localStorage.getItem(CUSTOM_STUDENTS_KEY);
-      return saved ? JSON.parse(saved) : [];
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(
+          (s): s is StudentProfile =>
+            Boolean(s && typeof s.id === 'string' && typeof s.name === 'string' && typeof s.avatar === 'string')
+        );
+      }
+      return [];
     } catch {
       return [];
     }

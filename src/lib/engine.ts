@@ -54,14 +54,17 @@ export function computeEngagementScore(interaction: Interaction): number {
 }
 
 function mapReelToGraphTopics(reel: Reel): string[] {
+  if (!reel || !Array.isArray(reel.topics)) return [];
   const topicIds: string[] = [];
   for (const topic of reel.topics) {
     const nodeId = getNodeIdForLabel(topic);
     if (nodeId) topicIds.push(nodeId);
   }
-  for (const concept of reel.concepts) {
-    const nodeId = getNodeIdForLabel(concept);
-    if (nodeId && !topicIds.includes(nodeId)) topicIds.push(nodeId);
+  if (Array.isArray(reel.concepts)) {
+    for (const concept of reel.concepts) {
+      const nodeId = getNodeIdForLabel(concept);
+      if (nodeId && !topicIds.includes(nodeId)) topicIds.push(nodeId);
+    }
   }
   return topicIds;
 }
@@ -199,18 +202,22 @@ function calculateRelevanceScore(
   interestProfile: InterestNode[]
 ): { score: number; matchedTopics: string[]; strategy: RecommendationStrategy } {
   const reelTopicIds = new Set<string>();
-  for (const topic of reel.topics) {
-    const id = getNodeIdForLabel(topic);
-    if (id) {
-      reelTopicIds.add(id);
-      getAncestors(id).forEach((a) => reelTopicIds.add(a));
+  if (reel && Array.isArray(reel.topics)) {
+    for (const topic of reel.topics) {
+      const id = getNodeIdForLabel(topic);
+      if (id) {
+        reelTopicIds.add(id);
+        getAncestors(id).forEach((a) => reelTopicIds.add(a));
+      }
     }
   }
-  for (const concept of reel.concepts) {
-    const id = getNodeIdForLabel(concept);
-    if (id) {
-      reelTopicIds.add(id);
-      getAncestors(id).forEach((a) => reelTopicIds.add(a));
+  if (reel && Array.isArray(reel.concepts)) {
+    for (const concept of reel.concepts) {
+      const id = getNodeIdForLabel(concept);
+      if (id) {
+        reelTopicIds.add(id);
+        getAncestors(id).forEach((a) => reelTopicIds.add(a));
+      }
     }
   }
 
