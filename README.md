@@ -83,6 +83,26 @@ A student interacts with:
 
 ---
 
+## 🏗️ System Architecture & Recommendation Engine Flow
+
+```mermaid
+flowchart TD
+    A["📱 User Scrolls Reel Feed"] --> B["⏱️ Telemetry Engine (Watch %, Replays, Likes, Saves)"]
+    B --> C["🧮 Multi-Objective Engagement Scoring"]
+    C --> D["🌐 Semantic Knowledge Graph (Hierarchies & Traversal)"]
+    D --> E["🎯 Latent Intent Inference (Beyond Shallow Keywords)"]
+    E --> F["🛡️ Hype Firewall & Quality Penalty Filter"]
+    F --> G["⚖️ 70/20/10 Tri-Tier Strategy Distributor"]
+    G --> H["1️⃣ Exploitation (70% Core Path)"]
+    G --> I["2️⃣ Adjacent Growth (20% Lateral Expansion)"]
+    G --> J["3️⃣ Discovery (10% Serendipitous Exploration)"]
+    H --> K["📋 8-Field Explainable Audit Output & Voiceover Reel"]
+    I --> K
+    J --> K
+```
+
+---
+
 ## 👥 Student Archetype Benchmarks
 
 | Student Profile | Interaction Behavior | Inferred Latent Interest | Primary Recommended Track |
@@ -117,8 +137,8 @@ A student interacts with:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/techtrace-ai.git
-   cd techtrace-ai
+   git clone https://github.com/yoursdevendhar/TechTrace-AI.git
+   cd TechTrace-AI
    ```
 
 2. **Install dependencies:**
