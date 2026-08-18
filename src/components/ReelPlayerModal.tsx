@@ -25,11 +25,23 @@ import { voiceoverEngine } from '@/lib/voiceover';
 import TechVisualizer from '@/components/TechVisualizer';
 import VoiceoverControlPill from '@/components/VoiceoverControlPill';
 
+interface CommentItem {
+  id: string;
+  author: string;
+  avatar: string;
+  gradient?: string;
+  text: string;
+  timeAgo: string;
+  isCurrentUser?: boolean;
+}
+
 interface Props {
   reel: Reel | null;
   isOpen: boolean;
   onClose: () => void;
   studentId: string;
+  studentName?: string;
+  studentAvatar?: string;
   studentGradient: string;
   onInteraction: (interaction: Interaction) => void;
   strategy?: RecommendationStrategy;
@@ -42,6 +54,8 @@ export default function ReelPlayerModal({
   isOpen,
   onClose,
   studentId,
+  studentName = 'Student',
+  studentAvatar,
   studentGradient,
   onInteraction,
   strategy,
@@ -59,10 +73,31 @@ export default function ReelPlayerModal({
   const [showShareToast, setShowShareToast] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showWhyDrawer, setShowWhyDrawer] = useState(false);
-  const [commentsList, setCommentsList] = useState<string[]>([
-    '🔥 This is exactly what I was looking for in production!',
-    'Great breakdown of the core architectural tradeoffs.',
-    'Clear, concise, and no fluff. Saved!',
+  const [commentsList, setCommentsList] = useState<CommentItem[]>([
+    {
+      id: 'c1',
+      author: 'Sarah Lin',
+      avatar: 'SL',
+      gradient: 'from-purple-500 to-indigo-600',
+      text: '🔥 This is exactly what I was looking for in production architecture!',
+      timeAgo: '3h ago',
+    },
+    {
+      id: 'c2',
+      author: 'Vikram Singh',
+      avatar: 'VS',
+      gradient: 'from-emerald-500 to-teal-600',
+      text: 'Great breakdown of the core tradeoffs. Saved for interview review.',
+      timeAgo: '1h ago',
+    },
+    {
+      id: 'c3',
+      author: 'Elena Rostova',
+      avatar: 'ER',
+      gradient: 'from-cyan-500 to-blue-600',
+      text: 'Clear, concise, and zero fluff. Excellent high-signal engineering Reel!',
+      timeAgo: '20m ago',
+    },
   ]);
   const [newComment, setNewComment] = useState('');
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
@@ -185,7 +220,16 @@ export default function ReelPlayerModal({
 
   const handleAddComment = () => {
     if (!newComment.trim()) return;
-    setCommentsList((prev) => [...prev, newComment.trim()]);
+    const userComment: CommentItem = {
+      id: 'comment-' + Date.now(),
+      author: studentName,
+      avatar: studentAvatar || studentName.slice(0, 2).toUpperCase(),
+      gradient: studentGradient,
+      text: newComment.trim(),
+      timeAgo: 'Just now',
+      isCurrentUser: true,
+    };
+    setCommentsList((prev) => [...prev, userComment]);
     setNewComment('');
     emitInteraction({ commented: true });
   };
@@ -400,24 +444,41 @@ export default function ReelPlayerModal({
 
               {/* Comments List */}
               <div className="flex-1 space-y-2 overflow-y-auto pr-1">
-                {commentsList.map((c, i) => (
+                {commentsList.map((c) => (
                   <div
-                    key={i}
+                    key={c.id}
                     className="rounded-2xl border border-slate-800 bg-slate-900/80 p-2.5 text-xs text-slate-300 shadow-sm"
                   >
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <div className="flex h-4 w-4 items-center justify-center rounded-full bg-cyan-500/20 text-[9px] font-bold text-cyan-300">
-                        {i + 1}
+                    <div className="flex items-center justify-between gap-1.5 mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <div
+                          className={`flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br ${
+                            c.gradient || 'from-cyan-500 to-blue-600'
+                          } text-[9px] font-bold text-white shadow-sm`}
+                        >
+                          {c.avatar}
+                        </div>
+                        <span className="text-xs font-bold text-white">@{c.author}</span>
+                        {c.isCurrentUser && (
+                          <span className="rounded-md bg-cyan-500/20 px-1.5 py-0.2 text-[9px] font-extrabold text-cyan-300 border border-cyan-500/30">
+                            You
+                          </span>
+                        )}
                       </div>
-                      <span className="text-[10px] font-bold text-cyan-400">@dev_{i + 1}</span>
+                      <span className="text-[10px] text-slate-500">{c.timeAgo}</span>
                     </div>
-                    <p className="leading-relaxed font-sans">{c}</p>
+                    <p className="leading-relaxed font-sans text-slate-200 pl-6">{c.text}</p>
                   </div>
                 ))}
               </div>
 
               {/* Comment Input */}
               <div className="mt-3 flex items-center gap-2 border-t border-slate-800 pt-2">
+                <div
+                  className={`flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br ${studentGradient} text-[10px] font-bold text-white shrink-0`}
+                >
+                  {studentAvatar || studentName.slice(0, 2).toUpperCase()}
+                </div>
                 <input
                   type="text"
                   value={newComment}
@@ -425,7 +486,7 @@ export default function ReelPlayerModal({
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleAddComment();
                   }}
-                  placeholder="Add a comment or question..."
+                  placeholder={`Comment as @${studentName}...`}
                   className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
                 />
                 <button
@@ -511,26 +572,46 @@ export default function ReelPlayerModal({
                 Community Discussions ({commentsList.length})
               </h4>
 
-              <div className="max-h-40 overflow-y-auto space-y-2 pr-1">
-                {commentsList.map((c, i) => (
+              <div className="max-h-44 overflow-y-auto space-y-2 pr-1">
+                {commentsList.map((c) => (
                   <div
-                    key={i}
+                    key={c.id}
                     className="rounded-xl bg-slate-900/80 p-2.5 text-xs text-slate-300 border border-slate-800/60"
                   >
-                    <span className="font-semibold text-cyan-400 block mb-0.5">
-                      @dev_{i + 1}
-                    </span>
-                    {c}
+                    <div className="flex items-center justify-between gap-1.5 mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <div
+                          className={`flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br ${
+                            c.gradient || 'from-cyan-500 to-blue-600'
+                          } text-[9px] font-bold text-white shadow-sm`}
+                        >
+                          {c.avatar}
+                        </div>
+                        <span className="font-semibold text-white">@{c.author}</span>
+                        {c.isCurrentUser && (
+                          <span className="rounded-md bg-cyan-500/20 px-1.5 py-0.2 text-[9px] font-extrabold text-cyan-300 border border-cyan-500/30">
+                            You
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[10px] text-slate-500">{c.timeAgo}</span>
+                    </div>
+                    <p className="text-xs text-slate-200 leading-relaxed pl-6">{c.text}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2 pt-1 border-t border-slate-800">
+                <div
+                  className={`flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br ${studentGradient} text-[10px] font-bold text-white shrink-0`}
+                >
+                  {studentAvatar || studentName.slice(0, 2).toUpperCase()}
+                </div>
                 <input
                   type="text"
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Add your thoughts or questions..."
+                  placeholder={`Share thoughts as @${studentName}...`}
                   className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleAddComment();
@@ -538,7 +619,8 @@ export default function ReelPlayerModal({
                 />
                 <button
                   onClick={handleAddComment}
-                  className="rounded-xl bg-cyan-500 p-2 text-white hover:bg-cyan-400 transition-colors"
+                  disabled={!newComment.trim()}
+                  className="rounded-xl bg-cyan-500 p-2 text-white hover:bg-cyan-400 transition-colors disabled:opacity-40 shadow"
                 >
                   <Send className="h-4 w-4" />
                 </button>

@@ -23,9 +23,21 @@ import { getReelVideo } from '@/data/reelImages';
 import { getReelMetrics } from '@/lib/metrics';
 import ReelPlayerModal from '@/components/ReelPlayerModal';
 
+interface CommentItem {
+  id: string;
+  author: string;
+  avatar: string;
+  gradient?: string;
+  text: string;
+  timeAgo: string;
+  isCurrentUser?: boolean;
+}
+
 interface Props {
   recommendations: Recommendation[];
   studentId: string;
+  studentName?: string;
+  studentAvatar?: string;
   studentGradient: string;
   latentInterest: string;
   onInteraction: (interaction: Interaction) => void;
@@ -69,6 +81,8 @@ const confidenceConfig: Record<Confidence, { color: string; bg: string }> = {
 export default function RecommendationPanel({
   recommendations,
   studentId,
+  studentName = 'Student',
+  studentAvatar,
   studentGradient,
   latentInterest,
   onInteraction,
@@ -83,7 +97,7 @@ export default function RecommendationPanel({
   >('all');
   const [activePlayingRec, setActivePlayingRec] = useState<Recommendation | null>(null);
   const [expandedCommentsReelId, setExpandedCommentsReelId] = useState<string | null>(null);
-  const [cardComments, setCardComments] = useState<Record<string, string[]>>({});
+  const [cardComments, setCardComments] = useState<Record<string, CommentItem[]>>({});
   const [newCardComment, setNewCardComment] = useState('');
 
   const filteredRecommendations =
@@ -93,13 +107,38 @@ export default function RecommendationPanel({
 
   const handleAddCardComment = (reelId: string) => {
     if (!newCardComment.trim()) return;
-    const initialList = cardComments[reelId] || [
-      '🔥 Super insightful architectural breakdown!',
-      'Saved for production interview review.',
+    const initialList: CommentItem[] = cardComments[reelId] || [
+      {
+        id: 'rec-c1',
+        author: 'Sarah Lin',
+        avatar: 'SL',
+        gradient: 'from-purple-500 to-indigo-600',
+        text: '🔥 Super insightful architectural breakdown!',
+        timeAgo: '2h ago',
+      },
+      {
+        id: 'rec-c2',
+        author: 'David Kim',
+        avatar: 'DK',
+        gradient: 'from-emerald-500 to-teal-600',
+        text: 'Saved for production system design and interview review.',
+        timeAgo: '45m ago',
+      },
     ];
+
+    const userComment: CommentItem = {
+      id: 'comment-' + Date.now(),
+      author: studentName,
+      avatar: studentAvatar || studentName.slice(0, 2).toUpperCase(),
+      gradient: studentGradient,
+      text: newCardComment.trim(),
+      timeAgo: 'Just now',
+      isCurrentUser: true,
+    };
+
     setCardComments((prev) => ({
       ...prev,
-      [reelId]: [...initialList, newCardComment.trim()],
+      [reelId]: [...initialList, userComment],
     }));
     setNewCardComment('');
     onInteraction({
@@ -466,23 +505,57 @@ export default function RecommendationPanel({
                     <div className="max-h-36 overflow-y-auto space-y-2 pr-1">
                       {(
                         cardComments[rec.reel.id] || [
-                          '🔥 Super insightful architectural breakdown!',
-                          'Saved for production interview review.',
+                          {
+                            id: 'rec-c1',
+                            author: 'Sarah Lin',
+                            avatar: 'SL',
+                            gradient: 'from-purple-500 to-indigo-600',
+                            text: '🔥 Super insightful architectural breakdown!',
+                            timeAgo: '2h ago',
+                          },
+                          {
+                            id: 'rec-c2',
+                            author: 'David Kim',
+                            avatar: 'DK',
+                            gradient: 'from-emerald-500 to-teal-600',
+                            text: 'Saved for production system design and interview review.',
+                            timeAgo: '45m ago',
+                          },
                         ]
-                      ).map((c, i) => (
+                      ).map((c) => (
                         <div
-                          key={i}
+                          key={c.id}
                           className="rounded-xl bg-slate-900/90 p-2.5 text-xs text-slate-300 border border-slate-800/80"
                         >
-                          <span className="text-[10px] font-bold text-cyan-400 block mb-0.5">
-                            @engineer_{i + 1}
-                          </span>
-                          <p className="leading-relaxed font-sans">{c}</p>
+                          <div className="flex items-center justify-between gap-1.5 mb-1">
+                            <div className="flex items-center gap-1.5">
+                              <div
+                                className={`flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-br ${
+                                  c.gradient || 'from-cyan-500 to-blue-600'
+                                } text-[8px] font-bold text-white shadow-sm`}
+                              >
+                                {c.avatar}
+                              </div>
+                              <span className="text-[11px] font-bold text-white">@{c.author}</span>
+                              {c.isCurrentUser && (
+                                <span className="rounded-md bg-cyan-500/20 px-1 py-0.2 text-[8px] font-extrabold text-cyan-300 border border-cyan-500/30">
+                                  You
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-[9px] text-slate-500">{c.timeAgo}</span>
+                          </div>
+                          <p className="leading-relaxed font-sans pl-5 text-slate-200">{c.text}</p>
                         </div>
                       ))}
                     </div>
 
-                    <div className="flex gap-2 pt-1">
+                    <div className="flex items-center gap-2 pt-1 border-t border-slate-800">
+                      <div
+                        className={`flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br ${studentGradient} text-[9px] font-bold text-white shrink-0`}
+                      >
+                        {studentAvatar || studentName.slice(0, 2).toUpperCase()}
+                      </div>
                       <input
                         type="text"
                         value={newCardComment}
@@ -490,13 +563,13 @@ export default function RecommendationPanel({
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') handleAddCardComment(rec.reel.id);
                         }}
-                        placeholder="Add a comment or question about this recommendation..."
-                        className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+                        placeholder={`Comment as @${studentName}...`}
+                        className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
                       />
                       <button
                         onClick={() => handleAddCardComment(rec.reel.id)}
                         disabled={!newCardComment.trim()}
-                        className="rounded-xl bg-cyan-500 px-3 py-2 text-white hover:bg-cyan-400 transition-colors disabled:opacity-40"
+                        className="rounded-xl bg-cyan-500 px-3 py-1.5 text-white hover:bg-cyan-400 transition-colors disabled:opacity-40"
                       >
                         <Send className="h-3.5 w-3.5" />
                       </button>
@@ -516,6 +589,8 @@ export default function RecommendationPanel({
           isOpen={true}
           onClose={() => setActivePlayingRec(null)}
           studentId={studentId}
+          studentName={studentName}
+          studentAvatar={studentAvatar}
           studentGradient={studentGradient}
           onInteraction={onInteraction}
           strategy={activePlayingRec.strategy}

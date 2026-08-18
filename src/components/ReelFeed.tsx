@@ -23,8 +23,20 @@ import { voiceoverEngine } from '@/lib/voiceover';
 import TechVisualizer from '@/components/TechVisualizer';
 import VoiceoverControlPill from '@/components/VoiceoverControlPill';
 
+interface CommentItem {
+  id: string;
+  author: string;
+  avatar: string;
+  gradient?: string;
+  text: string;
+  timeAgo: string;
+  isCurrentUser?: boolean;
+}
+
 interface Props {
   studentId: string;
+  studentName?: string;
+  studentAvatar?: string;
   studentGradient: string;
   watchedReelIds: Set<string>;
   interactions?: Interaction[];
@@ -35,6 +47,8 @@ interface Props {
 
 export default function ReelFeed({
   studentId,
+  studentName = 'Student',
+  studentAvatar,
   studentGradient,
   watchedReelIds,
   interactions = [],
@@ -56,9 +70,23 @@ export default function ReelFeed({
   const [shared, setShared] = useState(false);
   const [showShareToast, setShowShareToast] = useState(false);
   const [showComments, setShowComments] = useState(false);
-  const [commentsList, setCommentsList] = useState<string[]>([
-    '🔥 Super clear explanation of the architecture!',
-    'Saved for my next interview review.',
+  const [commentsList, setCommentsList] = useState<CommentItem[]>([
+    {
+      id: 'c1',
+      author: 'Sarah Lin',
+      avatar: 'SL',
+      gradient: 'from-purple-500 to-indigo-600',
+      text: 'Super clear explanation of the architecture tradeoffs! 🔥',
+      timeAgo: '2h ago',
+    },
+    {
+      id: 'c2',
+      author: 'David Kim',
+      avatar: 'DK',
+      gradient: 'from-emerald-500 to-teal-600',
+      text: 'Saved for my next production system design review.',
+      timeAgo: '45m ago',
+    },
   ]);
   const [newComment, setNewComment] = useState('');
   const [followed, setFollowed] = useState(false);
@@ -244,8 +272,16 @@ export default function ReelFeed({
 
   function handleAddComment() {
     if (!newComment.trim()) return;
-    const updated = [...commentsList, newComment.trim()];
-    setCommentsList(updated);
+    const userComment: CommentItem = {
+      id: 'comment-' + Date.now(),
+      author: studentName,
+      avatar: studentAvatar || studentName.slice(0, 2).toUpperCase(),
+      gradient: studentGradient,
+      text: newComment.trim(),
+      timeAgo: 'Just now',
+      isCurrentUser: true,
+    };
+    setCommentsList((prev) => [...prev, userComment]);
     setNewComment('');
     emitInteraction({ commented: true });
   }
@@ -274,9 +310,9 @@ export default function ReelFeed({
         </div>
       )}
 
-      {/* Reel Viewport Card */}
-      <div className="relative aspect-[9/16] overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl">
-        {/* Realistic Interactive Tech Visualizer (Always renders immediately with zero broken state) */}
+      {/* Main Reel Viewport */}
+      <div className="relative aspect-[9/16] w-full overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl">
+        {/* Animated Tech Code & Visualizer Component */}
         <TechVisualizer
           spec={videoData.spec}
           title={currentReel.title}
@@ -308,33 +344,27 @@ export default function ReelFeed({
           className="absolute left-0 right-0 top-0 z-40 h-1.5 cursor-pointer bg-white/20"
           onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
-            const pct = ((e.clientX - rect.left) / rect.width) * 100;
-            setProgress(pct);
+            const clickX = e.clientX - rect.left;
+            const newPct = (clickX / rect.width) * 100;
+            setProgress(newPct);
+            emitInteraction({ watchPercentage: Math.round(newPct) });
           }}
         >
           <div
-            className="h-full bg-cyan-400 transition-all duration-75"
+            className="h-full bg-cyan-400 transition-all duration-100"
             style={{ width: `${progress}%` }}
           />
         </div>
 
-        {/* Hype Score Badge */}
-        {currentReel.hypeScore > 50 && (
-          <div className="absolute left-3 top-12 z-20 flex items-center gap-1.5 rounded-full bg-red-500/90 px-2.5 py-0.5 text-[11px] font-bold text-white shadow-lg backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-white" />
-            Hype: {currentReel.hypeScore}/100
-          </div>
-        )}
-
         {/* Educational Value Badge */}
-        {currentReel.educationalValue > 85 && (
+        {currentReel.educationalValue && (
           <div className="absolute right-3 top-12 z-20 flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-0.5 text-[11px] font-bold text-white shadow-lg backdrop-blur-sm">
-            Edu: {currentReel.educationalValue}/100
+            Edu Value: {currentReel.educationalValue}/100
           </div>
         )}
 
-        {/* Bottom Metadata Info */}
-        <div className="absolute bottom-0 left-0 right-0 z-20 p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+        {/* Bottom Info Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 z-20 p-4 bg-gradient-to-t from-black/95 via-black/50 to-transparent">
           <div className="mb-2 flex items-center gap-2">
             <div
               className={`flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br ${studentGradient} text-xs font-bold text-white shadow-md`}
@@ -343,26 +373,17 @@ export default function ReelFeed({
             </div>
             <div>
               <p className="text-xs font-bold text-white">@{currentReel.creator}</p>
-              <p className="text-[10px] text-cyan-300 font-medium">{currentReel.category}</p>
+              <p className="text-[10px] text-cyan-400 font-medium">{currentReel.category}</p>
             </div>
-            {!followed && (
-              <button
-                onClick={handleFollow}
-                className="ml-auto rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm hover:bg-white/30"
-              >
-                Follow
-              </button>
-            )}
           </div>
 
-          <h2 className="text-sm font-bold text-white leading-tight">{currentReel.title}</h2>
+          <h3 className="text-sm font-bold text-white leading-tight">{currentReel.title}</h3>
           <p className="mt-1 text-xs text-slate-300 line-clamp-2">{currentReel.caption}</p>
 
-          {/* Views count pill in metadata */}
           <div className="mt-2 flex items-center justify-between">
             <div className="flex flex-wrap gap-1">
-              {currentReel.hashtags.slice(0, 4).map((tag) => (
-                <span key={tag} className="text-[10px] font-semibold text-cyan-300">
+              {currentReel.hashtags.slice(0, 3).map((tag) => (
+                <span key={tag} className="text-[10px] font-semibold text-cyan-400">
                   {tag}
                 </span>
               ))}
@@ -374,8 +395,8 @@ export default function ReelFeed({
           </div>
         </div>
 
-        {/* Right Action Bar */}
-        <div className="absolute bottom-20 right-3 z-30 flex flex-col items-center gap-3">
+        {/* Right Action Icons Bar */}
+        <div className="absolute bottom-16 right-3 z-30 flex flex-col items-center gap-3">
           <button
             onClick={handleToggleLike}
             className="flex flex-col items-center gap-0.5 transition-transform active:scale-90"
@@ -403,7 +424,11 @@ export default function ReelFeed({
             onClick={() => setShowComments(!showComments)}
             className="flex flex-col items-center gap-0.5 transition-transform active:scale-90"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80">
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-md transition-colors ${
+                showComments ? 'bg-cyan-500 text-white' : 'bg-black/60 text-white hover:bg-black/80'
+              }`}
+            >
               <MessageCircle className="h-5 w-5" />
             </div>
             <span className="text-[10px] font-semibold text-white">
@@ -456,11 +481,14 @@ export default function ReelFeed({
 
         {/* Comments Drawer Overlay */}
         {showComments && (
-          <div className="absolute inset-x-0 bottom-0 top-1/3 z-40 flex flex-col rounded-t-3xl border-t border-slate-700 bg-slate-950/95 p-4 shadow-2xl backdrop-blur-xl">
+          <div className="absolute inset-x-0 bottom-0 top-1/4 z-40 flex flex-col rounded-t-3xl border-t border-slate-700 bg-slate-950/95 p-4 shadow-2xl backdrop-blur-xl">
             <div className="mb-2 flex items-center justify-between border-b border-slate-800 pb-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                Comments ({commentsList.length})
-              </span>
+              <div className="flex items-center gap-2">
+                <MessageCircle className="h-4 w-4 text-cyan-400" />
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-200">
+                  Discussions ({commentsList.length})
+                </span>
+              </div>
               <button
                 onClick={() => setShowComments(false)}
                 className="text-xs font-bold text-slate-400 hover:text-white"
@@ -469,26 +497,46 @@ export default function ReelFeed({
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-2 py-2">
-              {commentsList.map((c, i) => (
+            <div className="flex-1 overflow-y-auto space-y-2 py-2 pr-1">
+              {commentsList.map((c) => (
                 <div
-                  key={i}
-                  className="rounded-xl bg-slate-900/80 p-2.5 text-xs text-slate-300 border border-slate-800/80"
+                  key={c.id}
+                  className="rounded-2xl border border-slate-800 bg-slate-900/80 p-2.5 text-xs text-slate-300 shadow-sm"
                 >
-                  <span className="font-semibold text-cyan-400 block mb-0.5">
-                    @dev_engineer_{i + 1}
-                  </span>
-                  {c}
+                  <div className="flex items-center justify-between gap-1.5 mb-1">
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className={`flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br ${
+                          c.gradient || 'from-cyan-500 to-blue-600'
+                        } text-[9px] font-bold text-white shadow-sm`}
+                      >
+                        {c.avatar}
+                      </div>
+                      <span className="text-xs font-bold text-white">@{c.author}</span>
+                      {c.isCurrentUser && (
+                        <span className="rounded-md bg-cyan-500/20 px-1.5 py-0.2 text-[9px] font-extrabold text-cyan-300 border border-cyan-500/30">
+                          You
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-slate-500">{c.timeAgo}</span>
+                  </div>
+                  <p className="leading-relaxed font-sans text-slate-200 pl-6">{c.text}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-2 flex gap-2">
+            <div className="mt-2 flex items-center gap-2 border-t border-slate-800 pt-2">
+              <div
+                className={`flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br ${studentGradient} text-[10px] font-bold text-white shrink-0`}
+              >
+                {studentAvatar || studentName.slice(0, 2).toUpperCase()}
+              </div>
               <input
                 type="text"
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Write a comment..."
+                placeholder={`Comment as @${studentName}...`}
                 className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleAddComment();
@@ -496,9 +544,10 @@ export default function ReelFeed({
               />
               <button
                 onClick={handleAddComment}
-                className="rounded-xl bg-cyan-500 p-2 text-white hover:bg-cyan-400"
+                disabled={!newComment.trim()}
+                className="flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-500 text-white shadow-md shadow-cyan-500/20 transition-all hover:bg-cyan-400 disabled:opacity-40"
               >
-                <Send className="h-4 w-4" />
+                <Send className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>

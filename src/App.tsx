@@ -426,6 +426,8 @@ export default function App() {
             {activeTab === 'feed' && (
               <ReelFeed
                 studentId={selectedStudentId}
+                studentName={selectedStudent.name}
+                studentAvatar={selectedStudent.avatar}
                 studentGradient={selectedStudent.gradient}
                 watchedReelIds={watchedReelIds}
                 interactions={interactions}
@@ -447,6 +449,8 @@ export default function App() {
               <RecommendationPanel
                 recommendations={recommendations}
                 studentId={selectedStudentId}
+                studentName={selectedStudent.name}
+                studentAvatar={selectedStudent.avatar}
                 studentGradient={selectedStudent.gradient}
                 latentInterest={latentInterest}
                 onInteraction={handleInteraction}
